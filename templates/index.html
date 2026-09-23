@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard UP — Rencana vs Produksi</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 46'%3E%3Crect x='1.5' y='1.5' width='43' height='43' rx='10' fill='%231e3a5f' stroke='%23bcd0e5' stroke-width='1.5'/%3E%3Cpath d='M7 36V29l5-5v5l5-5v5l5-5v-5h6v17z' fill='%23eaf2fa'/%3E%3Crect x='31.5' y='15' width='4.5' height='21' fill='%23eaf2fa'/%3E%3Cpolyline points='8,33 14,29 19,31 25,24 31,27 38,16' fill='none' stroke='%23ffd166' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='38' cy='16' r='2.8' fill='%237fd13b'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<!-- ===== HEADER APLIKASI ===== -->
+<header>
+  <div class="hdr">
+    <svg class="logo" width="46" height="46" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5aa0e0"/>   
+          <stop offset="1" stop-color="#16324f"/>
+        </linearGradient>
+      </defs>
+      <rect x="1.5" y="1.5" width="43" height="43" rx="10" fill="url(#lgbg)" stroke="#bcd0e5" stroke-width="1.5"/>
+      <path d="M7 36 V29 L12 24 V29 L17 24 V29 L22 24 V19 H28 V36 Z" fill="#eaf2fa" opacity="0.92"/>
+      <rect x="31.5" y="15" width="4.5" height="21" fill="#eaf2fa" opacity="0.92"/>
+      <polyline points="8,33 14,29 19,31 25,24 31,27 38,16" fill="none" stroke="#ffd166" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="38" cy="16" r="2.8" fill="#7fd13b"/>
+    </svg>
+    <div class="hdrtext">
+      <h1>Dashboard UP &mdash; Rencana vs Produksi</h1>
+      <p>Live dari MariaDB &bull; query_cpu_upa_2026 &amp; query_lhp_upa_2026</p>
+    </div>
+  </div>
+</header>
+
+<!-- ===== KONTEN UTAMA ===== -->
+<div class="wrap">
+  <div class="panel">
+
+    <!-- kontrol: rentang tanggal + tombol tampilkan -->
+    <div class="controls">
+      <label>Dari Tgl <select id="selFromP"></select></label>
+      <label>s/d <select id="selToP"></select></label>
+      <button class="act" onclick="loadPlan()">Tampilkan</button>
+    </div>
+
+    <!-- tombol cepat pemilih periode -->
+    <div class="quick">
+      <button class="btn2" onclick="setBulanIniP()">Bulan Ini</button>
+      <button class="btn2" onclick="setRangeP(1)">1 Bulan Terakhir</button>
+      <button class="btn2" onclick="setRangeP(3)">3 Bulan Terakhir</button>
+      <button class="btn2" onclick="setRangeP(0)">Semua Periode</button>
+    </div>
+
+    <!-- baris info status + rumus capaian -->
+    <div class="info" id="planInfo">
+      Nilai (%) = (Σ real_ctn LHP / Σ lhp_est CPU) × 100% per BU &mdash;
+      seluruh tanggal dalam rentang filter (rumus sama dengan Looker Studio).
+      Rencana SG hanya Line Packing SG (CTN); Line Inject/Filling SG (satuan PCS) dikecualikan.
+    </div>
+
+    <!-- bar chart capaian antar BU -->
+    <div class="cardFull">
+      <div class="cardh">
+        <b id="barTitleP">Realisasi vs Rencana Produksi (%) antar BU</b>
+        <span class="stat">navy = &ge; 100% (melebihi target) &bull; hijau = &lt; 100% (di bawah target)</span>
+      </div>
+      <div class="cvbar"><canvas id="chartBarP"></canvas></div>
+    </div>
+
+    <!-- grid line chart tren kumulatif per pabrik -->
+    <div id="chartGridP" class="grid"></div>
+
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='plan.js') }}"></script>
+</body>
+</html>

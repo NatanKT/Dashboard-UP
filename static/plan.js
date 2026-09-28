@@ -61,7 +61,7 @@ function loadPlan() {
 var targetLine = {
   id: "targetLine",
   afterDatasetsDraw: function (chart) {
-    var y = chart.scales.y.getPixelForValue(100);
+    var y = chart.scales.y.getPixelForValue(95);
     if (y == null || isNaN(y) || y < chart.chartArea.top || y > chart.chartArea.bottom) return;
     var ctx = chart.ctx, a = chart.chartArea;
     ctx.save();
@@ -75,7 +75,7 @@ var targetLine = {
     ctx.fillStyle = "#c62828";
     ctx.textAlign = "right";
     ctx.font = "11px Segoe UI";
-    ctx.fillText("Target 100%", a.right - 4, y - 4);
+    ctx.fillText("Target 95%", a.right - 4, y - 4);
     ctx.restore();
   }
 };
@@ -111,7 +111,7 @@ function renderBuBar(bus) {
       labels: arr.map(function (a) { return a.b.bu; }),
       datasets: [{
         data: arr.map(function (a) { return +(a.v * 100).toFixed(1); }),
-        backgroundColor: arr.map(function (a) { return a.v >= 1 ? "#1e3a5f" : "#2e7d32"; }),
+        backgroundColor: arr.map(function (a) { return a.v >= 0.95 ? "#1e3a5f" : "#2e7d32"; }),
         borderRadius: 3,
         barPercentage: 0.7
       }]

@@ -48,6 +48,8 @@ function loadPlan() {
     if (!d.plants) { el("planInfo").textContent = "Respon server tidak valid."; return; }
     renderPlanCharts(d);
     var tp = d.total_pct;
+    el("barRealP").textContent = d.total_actual != null ? d.total_actual.toLocaleString("id-ID") : "-";
+    el("barVsP").innerHTML = "vs RP: <b>" + (tp == null ? "-" : fmtVal(tp, true)) + "</b>";
     var sk = d.skipped || [];
     var sktxt = sk.length ? (" | " + sk.length + " pabrik lain dilewati (tanpa data pembanding)") : "";
     el("planInfo").textContent = "[LIVE SQL] Rencana = \u03A3 lhp_est (CPU) | Realisasi = \u03A3 real_ctn (LHP) | Total: rencana " +

@@ -58,13 +58,20 @@
       Rencana SG hanya Line Packing SG (CTN); Line Inject/Filling SG (satuan PCS) dikecualikan.
     </div>
 
-    <!-- bar chart capaian antar BU -->
+    <!-- bar chart capaian antar BU + scorecard total di kiri -->
     <div class="cardFull">
       <div class="cardh">
         <b id="barTitleP">Realisasi vs Rencana Produksi (%) antar BU</b>
         <span class="stat">navy = &ge; 95% (melebihi target) &bull; hijau = &lt; 95% (di bawah target)</span>
       </div>
-      <div class="cvbar"><canvas id="chartBarP"></canvas></div>
+      <div class="barrow">
+        <div class="score">
+          <div class="scoreNum" id="barRealP">-</div>
+          <div class="scoreLbl">Real (CTN)</div>
+          <div class="scoreVs" id="barVsP">vs RP: -</div>
+        </div>
+        <div class="cvbar"><canvas id="chartBarP"></canvas></div>
+      </div>
     </div>
 
     <!-- grid line chart tren kumulatif per pabrik -->
@@ -76,3 +83,4 @@
 <script src="{{ url_for('static', filename='plan.js') }}"></script>
 </body>
 </html>
+  

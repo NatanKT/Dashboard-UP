@@ -11,6 +11,7 @@ CONFIG_PATH = os.path.join(BASE_DIR, "config.ini")
 
 EST_TABLE = "query_cpu_upa_2026"
 ACT_TABLE = "query_lhp_upa_2026"
+OEE_TABLE = "query_oee_upa_2026"
 
 QUERY_TTL = 60
 
@@ -116,3 +117,13 @@ def fetch_plan_rows(date_from, date_to):
             "tanggal": _iso(r[2]), "real_ctn": r[3]}
            for r in rows_a]
     return est, act
+
+
+def fetch_oee_rows(date_from, date_to):
+    where, params = _date_where(date_from, date_to)
+    sql = ("SELECT `bu`, `tanggal`, `at`, `mpt`, `ao`, `so`, `go`, `target_c_bu`"
+           " FROM `" + OEE_TABLE + "`" + where)
+    rows = _cached_fetch(sql, params)
+    return [{"bu": _s(r[0]), "tanggal": _iso(r[1]), "at": r[2], "mpt": r[3],
+             "ao": r[4], "so": r[5], "go": r[6], "target": r[7]}
+            for r in rows]

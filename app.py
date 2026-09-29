@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 
 import db
 import plan
+import oee
 
 app = Flask(__name__)
 
@@ -25,6 +26,17 @@ def api_plan():
     result = plan.compute(est_rows, act_rows, dfrom, dto)
     result["dates"] = dates
     return jsonify(result)
+
+
+@app.route("/api/oee")
+def api_oee():
+    dfrom = (request.args.get("from") or "").strip()
+    dto = (request.args.get("to") or "").strip()
+    try:
+        rows = db.fetch_oee_rows(dfrom, dto)
+    except Exception as e:
+        return jsonify({"error": "Gagal membaca database: " + str(e)}), 502
+    return jsonify(oee.compute(rows, dfrom, dto))
 
 
 def main():

@@ -63,7 +63,10 @@ function loadPlan() {
 var targetLine = {
   id: "targetLine",
   afterDatasetsDraw: function (chart) {
-    var y = chart.scales.y.getPixelForValue(95);
+    var t = chart.options.plugins.targetLine || {};
+    var val = t.value != null ? t.value : 95;
+    var lbl = t.label != null ? t.label : "Target " + val + "%";
+    var y = chart.scales.y.getPixelForValue(val);
     if (y == null || isNaN(y) || y < chart.chartArea.top || y > chart.chartArea.bottom) return;
     var ctx = chart.ctx, a = chart.chartArea;
     ctx.save();
@@ -77,7 +80,7 @@ var targetLine = {
     ctx.fillStyle = "#c62828";
     ctx.textAlign = "right";
     ctx.font = "11px Segoe UI";
-    ctx.fillText("Target 95%", a.right - 4, y - 4);
+    ctx.fillText(lbl, a.right - 4, y - 4);
     ctx.restore();
   }
 };
@@ -85,17 +88,19 @@ var targetLine = {
 var barLabels = {
   id: "barLabels",
   afterDatasetsDraw: function (chart) {
-    var meta = chart.getDatasetMeta(0);
-    if (!meta.data) return;
     var ctx = chart.ctx;
     ctx.save();
     ctx.font = "11px Segoe UI";
     ctx.fillStyle = "#333";
     ctx.textAlign = "center";
-    meta.data.forEach(function (bar, i) {
-      var v = chart.data.datasets[0].data[i];
-      if (v == null) return;
-      ctx.fillText(v.toFixed(1) + "%", bar.x, bar.y - 5);
+    chart.data.datasets.forEach(function (ds, di) {
+      var meta = chart.getDatasetMeta(di);
+      if (!meta || meta.hidden || !meta.data) return;
+      meta.data.forEach(function (bar, i) {
+        var v = ds.data[i];
+        if (v == null) return;
+        ctx.fillText(v.toFixed(1) + "%", bar.x, bar.y - 5);
+      });
     });
     ctx.restore();
   }
@@ -232,7 +237,7 @@ function renderPlanCharts(d) {
 
 function setRangeP(n) {
   var ds = pstate.dates;
-  if (!n || !ds.length) { el("selFromP").value = ""; el("selToP").value = ""; loadPlan(); return; }
+  if (!n || !ds.length) { el("selFromP").value = ""; el("selToP").value = ""; loadAll(); return; }
   var dt = new Date(ds[ds.length - 1] + "T00:00:00");
   dt.setMonth(dt.getMonth() - n);
   var dd = dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0");
@@ -240,18 +245,18 @@ function setRangeP(n) {
   for (var i = 0; i < ds.length; i++) { if (ds[i] >= dd) { pick = ds[i]; break; } }
   el("selFromP").value = pick;
   el("selToP").value = "";
-  loadPlan();
+  loadAll();
 }
 
 function setBulanIniP() {
   var last = (pstate.last && pstate.last.last_actual) || "";
-  if (!last) { el("selFromP").value = ""; el("selToP").value = ""; loadPlan(); return; }
+  if (!last) { el("selFromP").value = ""; el("selToP").value = ""; loadAll(); return; }
   el("selFromP").value = last.slice(0, 7) + "-01";
   el("selToP").value = last;
-  loadPlan();
+  loadAll();
 }
 
-el("selFromP").onchange = loadPlan;
-el("selToP").onchange = loadPlan;
+el("selFromP").onchange = function () { loadAll(); };
+el("selToP").onchange = function () { loadAll(); };
 
 loadPlan();

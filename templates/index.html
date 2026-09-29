@@ -40,7 +40,7 @@
     <div class="controls">
       <label>Dari Tgl <select id="selFromP"></select></label>
       <label>s/d <select id="selToP"></select></label>
-      <button class="act" onclick="loadPlan()">Tampilkan</button>
+      <button class="act" onclick="loadAll()">Tampilkan</button>
     </div>
 
     <!-- tombol cepat pemilih periode -->
@@ -77,10 +77,64 @@
     <!-- grid line chart tren kumulatif per pabrik -->
     <div id="chartGridP" class="grid"></div>
 
+    <!-- ===== DASHBOARD OEE UPA (live query_oee_upa_2026, satu filter tanggal dgn panel atas) ===== -->
+    <div class="oeeHead">
+      <h2>Dashboard OEE UPA</h2>
+      <span class="stat">biru = OEE (ΣAT/ΣMPT × ΣAO/ΣSO × ΣGO/ΣAO) &bull; kuning = target_c_bu (sesuai Looker)</span>
+    </div>
+
+    <div class="info" id="oeeInfo">Memuat data OEE dari SQL...</div>
+
+    <!-- KPI utama + kartu rincian -->
+    <div class="kpiRow">
+      <div class="kpi" id="kpiOee">
+        <div class="kpiLbl">Total OEE</div>
+        <div class="kpiNum" id="oeeTotal">-</div>
+        <div class="kpiSub" id="oeeSub">Target: 85% &bull; Aktual: -</div>
+      </div>
+      <div class="kpi" id="kpiA">
+        <div class="kpiLbl">Availability = &Sigma;AT/&Sigma;MPT</div>
+        <div class="kpiNum" id="oeeA">-</div>
+        <div class="kpiSub" id="oeeASub">-</div>
+        <div class="pbar"><div class="pfill" id="oeeABar"></div></div>
+      </div>
+      <div class="kpi" id="kpiP">
+        <div class="kpiLbl">Performance = &Sigma;AO/&Sigma;SO</div>
+        <div class="kpiNum" id="oeeP">-</div>
+        <div class="kpiSub" id="oeePSub">-</div>
+        <div class="pbar"><div class="pfill" id="oeePBar"></div></div>
+      </div>
+      <div class="kpi" id="kpiQ">
+        <div class="kpiLbl">Quality = &Sigma;GO/&Sigma;AO</div>
+        <div class="kpiNum" id="oeeQ">-</div>
+        <div class="kpiSub" id="oeeQSub">-</div>
+        <div class="pbar"><div class="pfill" id="oeeQBar"></div></div>
+      </div>
+    </div>
+
+    <!-- bar chart OEE per BU/sektor -->
+    <div class="cardFull">
+      <div class="cardh">
+        <b>OEE (%) per Sektor &mdash; UPA</b>
+        <span class="stat">urut menurun (OEE) &bull; garis putus = target global 85%</span>
+      </div>
+      <div class="cvbar"><canvas id="oeeBar"></canvas></div>
+    </div>
+
+    <!-- tabel per BU: nilai live dari DB, angka bisa diedit (what-if) -->
+    <div class="cardFull">
+      <div class="cardh">
+        <b>Data &amp; Input per BU</b>
+        <span class="stat">nilai awal = Σ live dari query_oee_upa_2026 &bull; edit angka = simulasi what-if (reset saat reload)</span>
+      </div>
+      <table class="oeeTbl" id="oeeTbl"></table>
+    </div>
+
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='plan.js') }}"></script>
+<script src="{{ url_for('static', filename='oee.js') }}"></script>
 </body>
 </html>
   

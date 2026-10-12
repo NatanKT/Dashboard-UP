@@ -1,7 +1,6 @@
-// ===== DASHBOARD OEE UPA (live dari query_oee_upa_2026) =====
-// Biru  = OEE aktual per BU = (Sigma AT / Sigma MPT) x (Sigma AO / Sigma SO) x (Sigma GO / Sigma AO)
-// Kuning = target_c_bu per BU (kolom DB, sama dengan Looker)
-// Nilai tabel = Sigma live dari DB; edit angka = simulasi what-if.
+// ===== OEE UPA (live dari query_oee_upa_2026) =====
+// OEE per BU = (Sigma AT / Sigma MPT) x (Sigma AO / Sigma SO) x (Sigma GO / Sigma AO)
+// Hijau = di atas baseline, biru = di bawah. Tabel = nilai live, bisa diedit (what-if).
 
 var OEE_TGT = 85;
 
@@ -10,15 +9,14 @@ var KEYS = ["at", "mpt", "ao", "so", "go"];
 var oeeChart = null;
 
 function safeDiv(a, b) { return b > 0 ? a / b : null; }
+function num(v) { return (Math.round(v * 100) / 100).toLocaleString("id-ID"); }
 
 function oeePct(d) {
   var a = safeDiv(d.at, d.mpt), p = safeDiv(d.ao, d.so), q = safeDiv(d.go, d.ao);
   if (a == null || p == null || q == null) return null;
   return a * p * q * 100;
 }
-
 function oeeCls(p) { return p >= OEE_TGT ? "ok" : p >= 75 ? "mid" : "bad"; }
-function num(v) { return (Math.round(v * 100) / 100).toLocaleString("id-ID"); }
 
 function loadAll() { loadPlan(); loadOee(); }
 
@@ -32,9 +30,11 @@ function loadOee() {
     var t = d.total || {};
     buildOeeTable();
     updateOee();
-    el("oeeInfo").textContent = "[LIVE SQL] query_oee_upa_2026 | OEE per BU = (\u03A3AT/\u03A3MPT) \u00D7 (\u03A3AO/\u03A3SO) \u00D7 (\u03A3GO/\u03A3AO) | " +
-      oeeData.length + " BU | \u03A3AT " + num(t.at || 0) + " jam | \u03A3MPT " + num(t.mpt || 0) + " jam | Total OEE " +
-      (t.oee == null ? "-" : (t.oee * 100).toFixed(2) + "%") + " | kuning = target_c_bu";
+    var up = el("lastUpd");
+    if (up) up.textContent = "Data Last Updated: " + new Date().toLocaleString("id-ID");
+    el("oeeInfo").textContent = "[LIVE SQL] query_oee_upa_2026 | " + oeeData.length + " BU | \u03A3AT " +
+      num(t.at || 0) + " jam | \u03A3MPT " + num(t.mpt || 0) + " jam | Total OEE " +
+      (t.oee == null ? "-" : (t.oee * 100).toFixed(2) + "%");
   }).catch(function (e) { el("oeeInfo").textContent = "Gagal memuat OEE: " + e; });
 }
 
@@ -58,15 +58,6 @@ function buildOeeTable() {
   };
 }
 
-function setKpi(id, v, sub) {
-  var c = v == null ? "" : oeeCls(v);
-  el("kpi" + id).className = "kpi " + c;
-  el("oee" + id).textContent = v == null ? "-" : v.toFixed(1) + "%";
-  el("oee" + id + "Sub").textContent = sub;
-  var bar = el("oee" + id + "Bar");
-  if (bar) { bar.style.width = (v == null ? 0 : Math.min(v, 100)) + "%"; bar.className = "pfill " + c; }
-}
-
 function sumK(k) { return oeeData.reduce(function (t, d) { return t + (+d[k] || 0); }, 0); }
 
 function updateOee() {
@@ -76,12 +67,8 @@ function updateOee() {
   var O = (A != null && P != null && Q != null) ? A * P * Q * 100 : null;
 
   el("oeeTotal").textContent = O == null ? "-" : O.toFixed(2) + "%";
-  el("kpiOee").className = "kpi " + (O == null ? "" : oeeCls(O));
-  el("oeeSub").textContent = "Target: " + OEE_TGT + "% \u2022 Aktual: " + (O == null ? "-" : O.toFixed(2) + "%");
-
-  setKpi("A", A == null ? null : A * 100, "\u03A3AT " + num(sumK("at")) + " / \u03A3MPT " + num(sumK("mpt")));
-  setKpi("P", P == null ? null : P * 100, "\u03A3AO " + num(sumK("ao")) + " / \u03A3SO " + num(sumK("so")));
-  setKpi("Q", Q == null ? null : Q * 100, "\u03A3GO " + num(sumK("go")) + " / \u03A3AO " + num(sumK("ao")));
+  el("oeeSub").innerHTML = "vs Baseline <b class=\"" + (O != null && O >= OEE_TGT ? "up" : "") + "\">" +
+    (O == null ? "-" : (O >= OEE_TGT ? "\u25B2 " : "\u25BC ") + (O - OEE_TGT).toFixed(1) + "%") + "</b>";
 
   oeeData.forEach(function (d, i) {
     var p = oeePct(d), td = el("oeeR" + i);
@@ -91,13 +78,13 @@ function updateOee() {
     tt.textContent = d.target == null ? "-" : (d.target * 100).toFixed(2) + "%";
   });
 
-  var arr = oeeData.map(function (d) { return { m: d.bu, p: oeePct(d), t: d.target == null ? null : +(d.target * 100).toFixed(2) }; })
+  var arr = oeeData.map(function (d) { return { m: d.bu, p: oeePct(d) }; })
     .filter(function (a) { return a.p != null; })
     .sort(function (a, b) { return b.p - a.p; });
   if (oeeChart) {
     oeeChart.data.labels = arr.map(function (a) { return a.m; });
     oeeChart.data.datasets[0].data = arr.map(function (a) { return +a.p.toFixed(2); });
-    oeeChart.data.datasets[1].data = arr.map(function (a) { return a.t; });
+    oeeChart.data.datasets[0].backgroundColor = arr.map(function (a) { return a.p >= OEE_TGT ? "#2f9e44" : "#0d3b6b"; });
     oeeChart.update();
   }
 }
@@ -105,28 +92,25 @@ function updateOee() {
 function initOeeBar() {
   oeeChart = new Chart(el("oeeBar"), {
     type: "bar",
-    data: {
-      labels: [],
-      datasets: [
-        { label: "OEE", data: [], backgroundColor: "#1e3a5f", borderRadius: 3, barPercentage: 0.7 },
-        { label: "Target OEE (target_c_bu)", data: [], backgroundColor: "#f9a825", borderRadius: 3, barPercentage: 0.7 }
-      ]
-    },
+    data: { labels: [], datasets: [{ label: "OEE", data: [], backgroundColor: "#0d3b6b", barPercentage: 0.72 }] },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: { padding: { top: 18 } },
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
       plugins: {
-        legend: { display: true },
-        targetLine: { value: OEE_TGT, label: "Target 85%" },
-        tooltip: { callbacks: { label: function (ctx) { return ctx.dataset.label + ": " + ctx.parsed.y.toFixed(2) + "%"; } } }
+        legend: { display: false },
+        tooltip: { callbacks: { label: function (ctx) { return "OEE: " + ctx.parsed.y.toFixed(2) + "%"; } } }
       },
       scales: {
-        y: { beginAtZero: true, suggestedMax: 110, ticks: { callback: function (v) { return v + "%"; } } }
+        y: { beginAtZero: true, suggestedMax: 100, ticks: { color: "#555", callback: function (v) { return v + "%"; } } },
+        x: { ticks: { color: "#333", font: { weight: "600" } } }
       }
     },
-    plugins: [targetLine, barLabels]
+    plugins: [barLabels]
   });
+}
+
+function syncDates(d) {
+  if (d && d.dates && typeof setDates === "function") setDates(d.dates);
 }
 
 if (typeof document !== "undefined" && typeof Chart !== "undefined") {

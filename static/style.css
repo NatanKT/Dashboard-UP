@@ -1,80 +1,76 @@
-/* ===== BAGIAN CSS (TAMPILAN HALAMAN) ===== */
+/* ===== EXECUTIVE SUMMARY MANUFACTURE UPA ===== */
 
-/* --- style dasar halaman --- */
-body{font-family:"Segoe UI",Arial,sans-serif;margin:0;background:#f4f6f8;color:#222}
-.wrap{padding:16px 20px;max-width:1400px;margin:0 auto}
+/* --- dasar halaman --- */
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#e9ebee;color:#222}
 
-/* --- header aplikasi --- */
-header{background:#1e3a5f;color:#fff;padding:12px 20px}
-.hdr{display:flex;align-items:center;gap:14px}
-.logo{flex:0 0 auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
-.hdrtext h1{margin:0;font-size:20px}
-.hdrtext p{margin:4px 0 0;font-size:12px;color:#bcd0e5}
+/* --- header --- */
+header.head{background:#f4f5f7;border-bottom:3px solid #d9dce0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 22px;gap:16px}
+.headL{display:flex;align-items:center;gap:14px;min-width:0}
+.headL h1{margin:0;font-size:26px;font-weight:700;letter-spacing:.4px;color:#232323;white-space:nowrap}
+.logo{flex:0 0 auto;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+.headR{flex:0 0 auto}
+.tog{display:block}
 
-/* --- panel konten utama --- */
-.panel{background:#fff;border:1px solid #ddd;border-radius:6px;padding:14px}
+/* --- bar tanggal --- */
+.datebar{display:flex;align-items:center;gap:10px;
+  background:#f2c200;padding:8px 22px;border-bottom:1px solid #d4aa00;flex-wrap:wrap}
+.datebar .act{background:#0d3b6b;color:#fff;border:0;border-radius:4px;padding:6px 14px;cursor:pointer;font-size:13px}
+.datebar .act:hover{background:#124a86}
+.datebar .quick{display:flex;gap:6px;margin-left:auto}
+.datebar .btn2{background:#fff5cc;border:1px solid #c9a400;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
+.datebar .btn2:hover{background:#fff}
+.daterange{display:flex;align-items:center;gap:8px;background:#fff;border-radius:4px;padding:4px 8px;font-size:13px}
+.daterange select{border:0;background:transparent;font-size:13px;padding:2px;min-width:120px}
 
-/* --- baris kontrol (dropdown & tombol tampilkan) --- */
-.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
-label{font-size:13px;color:#555}
-select,input[type=text]{padding:6px 8px;border:1px solid #ccc;border-radius:4px;min-width:150px}
-button.act{padding:7px 14px;background:#1e3a5f;color:#fff;border:0;border-radius:4px;cursor:pointer}
-button.act:hover{background:#2b4f7d}
+/* --- grid panel --- */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 22px 0}
+.panel{background:#fff;border:1px solid #dfe2e6;border-radius:8px;padding:12px 16px 14px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.panel.full{grid-column:1 / -1;margin:16px 22px 0}
+.prow{display:flex;align-items:center;gap:18px}
+.scoreWrap{flex:0 0 190px;display:flex;flex-direction:column;justify-content:center}
+.slbl{font-size:15px;color:#3a3a3a;margin-bottom:2px}
+.snum{font-size:44px;font-weight:700;color:#232323;line-height:1.05}
+.svs{font-size:13px;color:#555;margin-top:4px}
+.svs b{color:#c0392b}
+.svs b.up{color:#2e7d32}
+.sbarTrack{margin-top:10px;width:150px;height:14px;background:#eee;border-radius:7px;overflow:hidden}
+.sbar{height:100%;width:0;background:#c0392b;border-radius:7px}
 
-/* --- tombol cepat pemilih periode --- */
-.quick{display:flex;gap:8px;margin:2px 0 10px;flex-wrap:wrap}
-.btn2{padding:6px 10px;background:#e7edf3;border:1px solid #c8d2dc;border-radius:4px;cursor:pointer;font-size:12.5px}
-.btn2:hover{background:#d7e1ea}
+/* --- judul pada kotak biru tua --- */
+.ptitle{display:inline-block;background:#0d3b6b;color:#fff;font-weight:700;
+  font-size:14px;padding:4px 12px;border-radius:4px;margin-bottom:10px}
 
-/* --- teks info status & rumus --- */
-.info{font-size:13px;color:#555;margin:8px 0}
+/* --- area chart (tinggi tetap wajib utk Chart.js) --- */
+.cvbar{flex:1;min-width:220px;height:230px}
 
-/* --- kartu chart (bar chart BU & grid per pabrik) --- */
-.cardFull{background:#fff;border:1px solid #e2e6ea;border-radius:6px;padding:10px 12px;margin-bottom:12px}
-.cardFull .cardh b{font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
-.card{background:#fff;border:1px solid #e2e6ea;border-radius:6px;padding:10px 12px}
-.cardh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.cardh b{font-size:14px}
-.cardh .stat{font-size:11px;color:#678}
+/* --- info / rumus --- */
+.info{font-size:11.5px;color:#666;margin-top:10px;border-top:1px dashed #e2e6ea;padding-top:7px}
+.info:empty{display:none}
 
-/* --- tinggi container chart (jangan diubah sembarangan:
-       Chart.js butuh elemen dengan tinggi tetap agar tidak
-       tumbuh tak terkendali saat resize) --- */
-.cvbar{height:260px}
-.cvcard{height:215px}
+/* --- slot chart belum ada data --- */
+.slot .placeholder{height:230px;display:flex;align-items:flex-start;
+  color:#999;font-size:13px;padding-top:6px}
 
-/* --- scorecard total di kiri bar chart --- */
-.barrow{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap}
-.score{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;padding-right:16px;border-right:1px solid #e2e6ea}
-.scoreNum{font-size:30px;font-weight:700;color:#1e3a5f;line-height:1.1}
-.scoreLbl{font-size:12px;color:#678;margin-top:2px}
-.scoreVs{font-size:12px;color:#555;margin-top:10px}
-.scoreVs b{font-size:16px;color:#222}
-.barrow .cvbar{flex:1;min-width:280px}
-
-/* --- dashboard OEE UPA --- */
-.oeeHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin:14px 0 8px;padding-top:10px;border-top:1px solid #e2e6ea}
-.oeeHead h2{margin:0;font-size:16px}
-.oeeHead .stat{font-size:11px;color:#678}
-.kpiRow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:12px}
-.kpi{background:#fff;border:1px solid #e2e6ea;border-radius:6px;padding:12px 14px}
-.kpiLbl{font-size:12px;color:#678}
-.kpiNum{font-size:30px;font-weight:700;line-height:1.15;margin:2px 0}
-.kpiSub{font-size:12px;color:#555}
-.kpi.ok .kpiNum{color:#2e7d32}
-.kpi.mid .kpiNum{color:#f9a825}
-.kpi.bad .kpiNum{color:#c62828}
-.pbar{height:10px;background:#e7edf3;border-radius:5px;overflow:hidden;margin-top:8px}
-.pfill{height:100%;width:0;border-radius:5px;transition:width .25s}
-.pfill.ok{background:#2e7d32}
-.pfill.mid{background:#f9a825}
-.pfill.bad{background:#c62828}
+/* --- tabel OEE --- */
 .oeeTbl{width:100%;border-collapse:collapse;font-size:12.5px}
-.oeeTbl th{background:#f8fafc;color:#678;font-weight:600;text-align:left;padding:5px 6px;border-bottom:1px solid #dfe4e9}
-.oeeTbl td{padding:4px 6px;border-bottom:1px solid #eef1f4}
+.oeeTbl th{background:#f6f8fa;color:#567;font-weight:600;text-align:left;padding:5px 8px;border-bottom:1px solid #dfe4e9}
+.oeeTbl td{padding:4px 8px;border-bottom:1px solid #eef1f4}
 .oeeTbl input{width:92px;padding:4px 6px;border:1px solid #ccc;border-radius:4px;font:inherit}
 .oeeNum{font-weight:700}
 .oeeNum.ok{color:#2e7d32}
 .oeeNum.mid{color:#f9a825}
 .oeeNum.bad{color:#c62828}
+
+/* --- footer --- */
+.foot{padding:10px 22px 18px;font-size:11px;color:#888}
+.foot a{color:#2b4f7d;text-decoration:none}
+.foot a:hover{text-decoration:underline}
+
+@media (max-width:900px){
+  .board{grid-template-columns:1fr}
+  .headL h1{font-size:19px;white-space:normal}
+}

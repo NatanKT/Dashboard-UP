@@ -3,138 +3,133 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard UP — Rencana vs Produksi</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 46'%3E%3Crect x='1.5' y='1.5' width='43' height='43' rx='10' fill='%231e3a5f' stroke='%23bcd0e5' stroke-width='1.5'/%3E%3Cpath d='M7 36V29l5-5v5l5-5v5l5-5v-5h6v17z' fill='%23eaf2fa'/%3E%3Crect x='31.5' y='15' width='4.5' height='21' fill='%23eaf2fa'/%3E%3Cpolyline points='8,33 14,29 19,31 25,24 31,27 38,16' fill='none' stroke='%23ffd166' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='38' cy='16' r='2.8' fill='%237fd13b'/%3E%3C/svg%3E">
+<title>Executive Summary Manufacture UPA</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 46'%3E%3Crect width='46' height='46' rx='10' fill='%231e3a5f'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-<!-- ===== HEADER APLIKASI ===== -->
-<header>
-  <div class="hdr">
+
+<!-- ===== HEADER ===== -->
+<header class="head">
+  <div class="headL">
     <svg class="logo" width="46" height="46" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#5aa0e0"/>   
-          <stop offset="1" stop-color="#16324f"/>
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="lgbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#e0a020"/><stop offset="1" stop-color="#16324f"/>
+      </linearGradient></defs>
       <rect x="1.5" y="1.5" width="43" height="43" rx="10" fill="url(#lgbg)" stroke="#bcd0e5" stroke-width="1.5"/>
-      <path d="M7 36 V29 L12 24 V29 L17 24 V29 L22 24 V19 H28 V36 Z" fill="#eaf2fa" opacity="0.92"/>
-      <rect x="31.5" y="15" width="4.5" height="21" fill="#eaf2fa" opacity="0.92"/>
-      <polyline points="8,33 14,29 19,31 25,24 31,27 38,16" fill="none" stroke="#ffd166" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="38" cy="16" r="2.8" fill="#7fd13b"/>
+      <path d="M9 34V22c0-5 4-9 9-9s9 4 9 9" fill="none" stroke="#eaf2fa" stroke-width="3" stroke-linecap="round"/>
+      <path d="M20 34V24" fill="none" stroke="#eaf2fa" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="34" cy="14" r="5" fill="#ffd166"/>
     </svg>
-    <div class="hdrtext">
-      <h1>Dashboard UP &mdash; Rencana vs Produksi</h1>
-      <p>Live dari MariaDB &bull; query_cpu_upa_2026 &amp; query_lhp_upa_2026</p>
-    </div>
+    <h1>EXECUTIVE SUMMARY MANUFACTURE UPA</h1>
+  </div>
+  <div class="headR">
+    <svg class="tog" width="180" height="44" viewBox="0 0 180 44" xmlns="http://www.w3.org/2000/svg" aria-label="Together we achieve more">
+      <g transform="translate(4,4)">
+        <path d="M0 18a10 10 0 0 1 10-10h4v6h-4a4 4 0 0 0-4 4v4H0z" fill="#e8472b"/>
+        <path d="M22 0a10 10 0 0 1 10 10v4h-6v-4a4 4 0 0 0-4-4h-4V0z" fill="#f6a51c"/>
+        <path d="M32 22a10 10 0 0 1-10 10h-4v-6h4a4 4 0 0 0 4-4v-4h6z" fill="#2f6db5"/>
+        <path d="M10 32a10 10 0 0 1-10-10v-4h6v4a4 4 0 0 0 4 4h4v6z" fill="#4a9c3d"/>
+        <path d="M14 18l6 8h-5v-8z M14 18l-6 8h5v-8z" fill="#f6c619"/>
+      </g>
+      <text x="52" y="18" font-family="Segoe UI, Arial" font-size="13" font-weight="700" fill="#c0392b">TOGETHER</text>
+      <text x="52" y="33" font-family="Segoe UI, Arial" font-size="11" fill="#2b4f7d">we achieve more</text>
+    </svg>
   </div>
 </header>
 
-<!-- ===== KONTEN UTAMA ===== -->
-<div class="wrap">
-  <div class="panel">
+<!-- ===== BAR PENGATUR TANGGAL ===== -->
+<div class="datebar">
+  <label class="daterange">
+    <select id="selFromP"></select>
+    <span>&dash;</span>
+    <select id="selToP"></select>
+  </label>
+  <button class="act" onclick="loadAll()">Tampilkan</button>
+  <div class="quick">
+    <button class="btn2" onclick="setBulanIniP()">Bulan Ini</button>
+    <button class="btn2" onclick="setRangeP(1)">1 Bln</button>
+    <button class="btn2" onclick="setRangeP(3)">3 Bln</button>
+    <button class="btn2" onclick="setRangeP(0)">Semua</button>
+  </div>
+</div>
 
-    <!-- kontrol: rentang tanggal + tombol tampilkan -->
-    <div class="controls">
-      <label>Dari Tgl <select id="selFromP"></select></label>
-      <label>s/d <select id="selToP"></select></label>
-      <button class="act" onclick="loadAll()">Tampilkan</button>
-    </div>
+<!-- ===== GRID PANEL ===== -->
+<div class="board">
 
-    <!-- tombol cepat pemilih periode -->
-    <div class="quick">
-      <button class="btn2" onclick="setBulanIniP()">Bulan Ini</button>
-      <button class="btn2" onclick="setRangeP(1)">1 Bulan Terakhir</button>
-      <button class="btn2" onclick="setRangeP(3)">3 Bulan Terakhir</button>
-      <button class="btn2" onclick="setRangeP(0)">Semua Periode</button>
-    </div>
-
-    <!-- baris info status + rumus capaian -->
-    <div class="info" id="planInfo">
-      Nilai (%) = (Σ real_ctn LHP / Σ lhp_est CPU) × 100% per BU &mdash;
-      seluruh tanggal dalam rentang filter (rumus sama dengan Looker Studio).
-      Rencana SG hanya Line Packing SG (CTN); Line Inject/Filling SG (satuan PCS) dikecualikan.
-    </div>
-
-    <!-- bar chart capaian antar BU + scorecard total di kiri -->
-    <div class="cardFull">
-      <div class="cardh">
-        <b id="barTitleP">Realisasi vs Rencana Produksi (%) antar BU</b>
-        <span class="stat">navy = &ge; 95% (melebihi target) &bull; hijau = &lt; 95% (di bawah target)</span>
+  <!-- Produksi -->
+  <section class="panel">
+    <div class="ptitle">Realisasi vs Rencana Produksi (%)</div>
+    <div class="prow">
+      <div class="scoreWrap">
+        <div class="slbl">Real (Ctn)</div>
+        <div class="snum" id="barRealP">-</div>
+        <div class="svs" id="barVsP">vs RP Awal -</div>
+        <div class="sbarTrack"><div class="sbar" id="barVsBar"></div></div>
       </div>
-      <div class="barrow">
-        <div class="score">
-          <div class="scoreNum" id="barRealP">-</div>
-          <div class="scoreLbl">Real (CTN)</div>
-          <div class="scoreVs" id="barVsP">vs RP: -</div>
-        </div>
-        <div class="cvbar"><canvas id="chartBarP"></canvas></div>
-      </div>
+      <div class="cvbar"><canvas id="chartBarP"></canvas></div>
     </div>
+    <div class="info" id="planInfo">Memuat data...</div>
+  </section>
 
-    <!-- grid line chart tren kumulatif per pabrik -->
-    <div id="chartGridP" class="grid"></div>
-
-    <!-- ===== DASHBOARD OEE UPA (live query_oee_upa_2026, satu filter tanggal dgn panel atas) ===== -->
-    <div class="oeeHead">
-      <h2>Dashboard OEE UPA</h2>
-      <span class="stat">biru = OEE (ΣAT/ΣMPT × ΣAO/ΣSO × ΣGO/ΣAO) &bull; kuning = target_c_bu (sesuai Looker)</span>
-    </div>
-
-    <div class="info" id="oeeInfo">Memuat data OEE dari SQL...</div>
-
-    <!-- KPI utama + kartu rincian -->
-    <div class="kpiRow">
-      <div class="kpi" id="kpiOee">
-        <div class="kpiLbl">Total OEE</div>
-        <div class="kpiNum" id="oeeTotal">-</div>
-        <div class="kpiSub" id="oeeSub">Target: 85% &bull; Aktual: -</div>
-      </div>
-      <div class="kpi" id="kpiA">
-        <div class="kpiLbl">Availability = &Sigma;AT/&Sigma;MPT</div>
-        <div class="kpiNum" id="oeeA">-</div>
-        <div class="kpiSub" id="oeeASub">-</div>
-        <div class="pbar"><div class="pfill" id="oeeABar"></div></div>
-      </div>
-      <div class="kpi" id="kpiP">
-        <div class="kpiLbl">Performance = &Sigma;AO/&Sigma;SO</div>
-        <div class="kpiNum" id="oeeP">-</div>
-        <div class="kpiSub" id="oeePSub">-</div>
-        <div class="pbar"><div class="pfill" id="oeePBar"></div></div>
-      </div>
-      <div class="kpi" id="kpiQ">
-        <div class="kpiLbl">Quality = &Sigma;GO/&Sigma;AO</div>
-        <div class="kpiNum" id="oeeQ">-</div>
-        <div class="kpiSub" id="oeeQSub">-</div>
-        <div class="pbar"><div class="pfill" id="oeeQBar"></div></div>
-      </div>
-    </div>
-
-    <!-- bar chart OEE per BU/sektor -->
-    <div class="cardFull">
-      <div class="cardh">
-        <b>OEE (%) per Sektor &mdash; UPA</b>
-        <span class="stat">urut menurun (OEE) &bull; garis putus = target global 85%</span>
+  <!-- OEE -->
+  <section class="panel">
+    <div class="ptitle">OEE (%)</div>
+    <div class="prow">
+      <div class="scoreWrap">
+        <div class="slbl">%OEE UPA</div>
+        <div class="snum" id="oeeTotal">-</div>
+        <div class="svs" id="oeeSub">vs Baseline -</div>
       </div>
       <div class="cvbar"><canvas id="oeeBar"></canvas></div>
     </div>
+    <div class="info" id="oeeInfo">Memuat data...</div>
+  </section>
 
-    <!-- tabel per BU: nilai live dari DB, angka bisa diedit (what-if) -->
-    <div class="cardFull">
-      <div class="cardh">
-        <b>Data &amp; Input per BU</b>
-        <span class="stat">nilai awal = Σ live dari query_oee_upa_2026 &bull; edit angka = simulasi what-if (reset saat reload)</span>
-      </div>
-      <table class="oeeTbl" id="oeeTbl"></table>
-    </div>
+  <!-- slot: Cost per Unit -->
+  <section class="panel slot">
+    <div class="ptitle">Cost per Unit (%)</div>
+    <div class="placeholder">Data belum tersedia</div>
+  </section>
 
-  </div>
+  <!-- slot: BS BB -->
+  <section class="panel slot">
+    <div class="ptitle">BS BB (%)</div>
+    <div class="placeholder">Data belum tersedia</div>
+  </section>
+
+  <!-- slot: BS BP -->
+  <section class="panel slot">
+    <div class="ptitle">BS BP (%)</div>
+    <div class="placeholder">Data belum tersedia</div>
+  </section>
+
+  <!-- slot: Ratio Gas -->
+  <section class="panel slot">
+    <div class="ptitle">Rasio Gas</div>
+    <div class="placeholder">Data belum tersedia</div>
+  </section>
+
+  <!-- slot: Ratio Listrik -->
+  <section class="panel slot">
+    <div class="ptitle">Rasio Listrik</div>
+    <div class="placeholder">Data belum tersedia</div>
+  </section>
+
 </div>
+
+<!-- rincian OEE per BU (kartu edit what-if) -->
+<section class="panel full">
+  <div class="ptitle">Data &amp; Input per BU (OEE)</div>
+  <table class="oeeTbl" id="oeeTbl"></table>
+</section>
+
+<footer class="foot">
+  <span id="lastUpd">Data Last Updated: -</span> &bull; <a href="#" onclick="return false">Privacy Policy</a>
+</footer>
 
 <script src="{{ url_for('static', filename='plan.js') }}"></script>
 <script src="{{ url_for('static', filename='oee.js') }}"></script>
 </body>
 </html>
-  

@@ -49,6 +49,7 @@ function loadPlan() {
     if (!d.plants) { el("planInfo").textContent = "Respon server tidak valid."; return; }
     pstate.last = d;
     setDates(d.dates);
+    clearCharts();
     renderBuBar(d.bus);
     var tp = d.total_pct;
     el("barRealP").textContent = fmtNum(d.total_actual);
@@ -159,7 +160,10 @@ function setBulanIniP() {
 }
 
 function setDates(ds) {
-  pstate.dates = ds || [];
+  ds = ds || [];
+  var first = pstate.dates.length === 0;
+  pstate.dates = ds;
+  if (!first) return;
   fillSel(el("selFromP"), pstate.dates, "Semua");
   fillSel(el("selToP"), pstate.dates, "Semua");
 }
